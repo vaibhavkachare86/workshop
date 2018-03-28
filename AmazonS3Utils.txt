@@ -1,0 +1,37 @@
+Package com.mywork
+
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
+public class AmazonS3Utils {
+
+	private static final String SUFFIX = "/";
+
+	private AWSCredentials credentials;
+	private AmazonS3 s3client;
+
+	public AmazonS3Utils(String key, String secret) {
+		credentials = new BasicAWSCredentials(key, secret);
+		s3client = new AmazonS3Client(credentials);
+	}
+
+
+	public void uploadFileToS3(String bucketName, String folderName, String location, String file) {
+		String fileName = folderName + SUFFIX + file;
+		s3client.putObject(new PutObjectRequest(bucketName, fileName, new File(location + file))
+				.withCannedAcl(CannedAccessControlList.PublicRead));
+	}
+
+	public static void main(String[] args) throws IOException {
+		var key = "XXXXXX";
+		var secret = "XXXXXXXXXXXX";
+		AmazonS3Utils s3Utils = new AmazonS3Utils(key, secret);
+	    s3Utils .uploadFileToS3("Bucketname", "favoritesongs", "/locationoffile", "filename");
+	 }
+
+}
